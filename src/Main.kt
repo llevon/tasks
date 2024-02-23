@@ -1,5 +1,6 @@
 import kotlin.concurrent.thread
 
+
 data class Profile(val id: Int, val name: String, val accountInfo: String)
 
 class ProfileManager {
@@ -18,7 +19,6 @@ class ProfileManager {
         if (profile != null) {
             Thread.sleep(2000)
             println("Account Info for ${profile.name}: ${profile.accountInfo}")
-            Thread.sleep(2000)
         } else {
             println("Profile not found.")
         }
@@ -33,23 +33,47 @@ fun main() {
     profileManager.addProfile(Profile(4, "Robert P", "Account details for Robert"))
     profileManager.addProfile(Profile(5, "Mary C", "Account details for Mary"))
     profileManager.addProfile(Profile(6, "Joseph D", "Account details for Joseph"))
-    while (true) {
-        profileManager.displayProfiles()
-        println("Enter profile number to view account info, or 'q' to quit:")
-        val input = readlnOrNull()
 
-        if (input.equals("q", ignoreCase = true)) {
-            break
-        }
-        try {
-            val profileId = input?.toInt()
-            if (profileId != null) {
-                profileManager.displayAccountInfo(profileId)
-            } else {
-                println("Invalid input. Please enter a valid profile number.")
+    var currentScreen = "profileList"
+
+    while (true) {
+        when (currentScreen) {
+            "profileList" -> {
+                profileManager.displayProfiles()
+                println("Enter profile number to view account info, 'q' to quit:")
+                val input = readlnOrNull()
+
+                when {
+                    input.equals("q", ignoreCase = true) -> {
+                        break
+                    }
+                    else -> {
+                        try {
+                            val profileId = input?.toInt()
+                            if (profileId != null) {
+                                profileManager.displayAccountInfo(profileId)
+                                currentScreen = "profileInfo"
+                            } else {
+                                println("Invalid input. Please enter a valid profile number.")
+                            }
+                        } catch (e: NumberFormatException) {
+                            println("Invalid input. Please enter a valid profile number.")
+                        }
+                    }
+                }
             }
-        } catch (e: NumberFormatException) {
-            println("Invalid input. Please enter a valid profile number.")
+            "profileInfo" -> {
+                println("Press 'i' to go back to profile list, 'q' to quit:")
+                val input = readlnOrNull()
+                when {
+                    input.equals("q", ignoreCase = true) -> {
+                        break
+                    }
+                    input.equals("i", ignoreCase = true) -> {
+                        currentScreen = "profileList"
+                    }
+                }
+            }
         }
     }
     println("Exiting program.")
