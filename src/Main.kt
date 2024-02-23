@@ -1,4 +1,3 @@
-import kotlin.concurrent.thread
 
 data class Profile(val id: Int, val name: String, val accountInfo: String)
 
